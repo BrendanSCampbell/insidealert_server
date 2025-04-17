@@ -38,4 +38,15 @@ sequelize.sync()
   .then(() => console.log('Database synced'))
   .catch((err) => console.error('Error syncing database:', err));
 
+app.get('/users', async (req, res) => {
+  const { User } = require('./models');
+  try {
+    const users = await User.findAll();
+    res.json(users);
+  } catch (err) {
+    console.error('Failed to fetch users:', err);
+    res.status(500).send('Error fetching users');
+  }
+});
+
 module.exports = { sequelize, User };
