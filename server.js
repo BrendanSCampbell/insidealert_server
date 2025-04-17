@@ -94,20 +94,20 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) =>
 
     const { User } = require('./models');
 
-    try {
-    await User.findOrCreate({
-      where: { discord_id: discordId },
-      defaults: {
-        stripe_customer_id: customerId,
-        subscription_id: subscriptionId,
-        subscription_status: 'active',
-      },
-    });
+    // try {
+    //   await User.findOrCreate({
+    //     where: { discord_id: discordId },
+    //     defaults: {
+    //       stripe_customer_id: customerId,
+    //       subscription_id: subscriptionId,
+    //       subscription_status: 'active',
+    //     },
+    //   });
 
-    console.log(`Saved subscription for Discord user: ${discordId}`);
-  } catch (err) {
-    console.error('DB error:', err);
-  }
+    //   console.log(`Saved subscription for Discord user: ${discordId}`);
+    // } catch (err) {
+    //   console.error('DB error:', err);
+    // }
   }
 
   res.status(200).send();
