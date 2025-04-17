@@ -101,11 +101,6 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
     };
 
     const filePath = path.join(__dirname, 'users.json');
-
-      console.log(`Saved subscription for Discord user: ${discordId}`);
-    } catch (err) {
-      console.error('DB error:', err);
-    }
   }
 
   res.status(200).send();
