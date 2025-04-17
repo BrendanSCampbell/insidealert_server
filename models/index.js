@@ -1,21 +1,24 @@
-const { Sequelize, DataTypes } = require('sequelize');
+const { DataTypes } = require('sequelize');
+const sequelize = require('../sequelize');  // adjust the path based on where sequelize.js is located
 
-const sequelize = new Sequelize(process.env.DATABASE_URL, {
-  dialect: 'postgres',
-  protocol: 'postgres',
-  dialectOptions: {
-    ssl: {
-      require: true,
-      rejectUnauthorized: false, // Heroku's Postgres uses self-signed certs
-    },
+const User = sequelize.define('User', {
+  discord_id: {
+    type: DataTypes.STRING,
+    allowNull: false,
+    unique: true,
+  },
+  stripe_customer_id: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  subscription_id: {
+    type: DataTypes.STRING,
+    allowNull: false,
+  },
+  subscription_status: {
+    type: DataTypes.STRING,
+    allowNull: false,
   },
 });
 
-const User = require('./user')(sequelize, DataTypes);
-
-sequelize.sync(); // Or sync({ alter: true }) to update tables safely
-
-module.exports = {
-  sequelize,
-  User,
-};
+module.exports = User;
