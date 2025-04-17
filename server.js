@@ -91,6 +91,22 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
     const customerId = session.customer;
     const subscriptionId = session.subscription;
     console.log(`Subscription complete for Discord user: ${discordId}`);
+
+    try {
+      // Store user data in PostgreSQL using Sequelize
+      await User.findOrCreate({
+        where: { discord_id: discordId },
+        defaults: {
+          stripe_customer_id: customerId,
+          subscription_id: subscriptionId,
+          subscription_status: 'active',
+        },
+      });
+
+      console.log(`Saved subscription for Discord user: ${discordId}`);
+    } catch (err) {
+      console.error('DB error:', err);
+    }
   }
 
   res.status(200).send();
