@@ -2,15 +2,8 @@ const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
+const { sequelize, User } = require('./models'); // Import sequelize and User model
 const app = express();
-const fs = require('fs');
-const path = require('path');
-
-const { User } = require('./models');
-
-sequelize.sync({ force: false }).then(() => {
-  console.log('Database synced!');
-});
 
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -71,17 +64,8 @@ app.get('/callback', async (req, res) => {
   }
 });
 
-// Success and Cancel routes
-app.get('/success', (req, res) => {
-  res.send('Payment successful! You can close this page.');
-});
-
-app.get('/cancel', (req, res) => {
-  res.send('Payment failed. Please try again.');
-});
-
 // Stripe webhook
-app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
 
@@ -98,21 +82,21 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
     const subscriptionId = session.subscription;
     console.log(`Subscription complete for Discord user: ${discordId}`);
 
-    try {
-      // Store user data in PostgreSQL using Sequelize
-      await User.findOrCreate({
-        where: { discord_id: discordId },
-        defaults: {
-          stripe_customer_id: customerId,
-          subscription_id: subscriptionId,
-          subscription_status: 'active',
-        },
-      });
-
+    // Create or update user in the database
+    User.findOrCreate({
+      where: { discord_id: discordId },
+      defaults: {
+        stripe_customer_id: customerId,
+        subscription_id: subscriptionId,
+        subscription_status: 'active',
+      },
+    })
+    .then(() => {
       console.log(`Saved subscription for Discord user: ${discordId}`);
-    } catch (err) {
+    })
+    .catch((err) => {
       console.error('DB error:', err);
-    }
+    });
   }
 
   res.status(200).send();
