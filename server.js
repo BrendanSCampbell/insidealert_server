@@ -16,7 +16,7 @@ app.get('/', (req, res) => {
 
 // Redirect user to Discord OAuth
 app.get('/login', (req, res) => {
-  const redirectUri = encodeURIComponent('https://your-server.com/callback');
+  const redirectUri = encodeURIComponent('https://insidealert-backendserver-9ef87c4b222a.herokuapp.com/callback');
   const clientId = process.env.DISCORD_CLIENT_ID;
   const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify`;
   res.redirect(oauthUrl);
