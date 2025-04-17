@@ -56,6 +56,7 @@ app.get('/callback', async (req, res) => {
       metadata: {
         discord_id: discordUser.id,
       },
+    }
     });
 
 app.get('/success', (req, res) => {
@@ -94,49 +95,6 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
 
   res.status(200).send();
 });
-
-// const fs = require('fs');
-// const path = require('path');
-
-// Function to update users.json when an order is completed
-// function updateUserOrder(discordId, orderData) {
-//   const filePath = path.join(__dirname, 'users.json');
-
-  // Read the existing users.json file
-//   fs.readFile(filePath, 'utf8', (readErr, data) => {
-//     if (readErr) {
-//       console.error('Error reading users.json:', readErr);
-//       return;
-//     }
-
-//     let users;
-//     try {
-//       users = JSON.parse(data);
-//     } catch (parseErr) {
-//       console.error('Error parsing users.json:', parseErr);
-//       return;
-//     }
-
-//     // Check if the user exists; if not, initialize their data
-//     if (!users[discordId]) {
-//       users[discordId] = {
-//         orders: []
-//       };
-//     }
-
-//     // Add the new order to the user's order history
-//     users[discordId].orders.push(orderData);
-
-//     // Write the updated users object back to users.json
-//     fs.writeFile(filePath, JSON.stringify(users, null, 2), 'utf8', (writeErr) => {
-//       if (writeErr) {
-//         console.error('Error writing to users.json:', writeErr);
-//       } else {
-//         console.log(`Order for user ${discordId} has been recorded.`);
-//       }
-//     });
-//   });
-// }
 
 app.get('/users', async (req, res) => {
   const { User } = require('./models'); // Make sure this path matches where your model is
