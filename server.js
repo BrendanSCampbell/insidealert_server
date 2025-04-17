@@ -102,5 +102,18 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) =>
   res.status(200).send();
 });
 
+
+app.get('/users', async (req, res) => {
+  const { User } = require('./models');
+  try {
+    const users = await User.findAll();
+    res.json(users);
+  } catch (err) {
+    console.error('Failed to fetch users:', err);
+    res.status(500).send('Error fetching users');
+  }
+});
+
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
