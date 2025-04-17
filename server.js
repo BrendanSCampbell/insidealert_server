@@ -8,6 +8,10 @@ const path = require('path');
 
 const { User } = require('./models');
 
+sequelize.sync({ force: false }).then(() => {
+  console.log('Database synced!');
+});
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
