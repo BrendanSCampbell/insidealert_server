@@ -91,11 +91,6 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
     const customerId = session.customer;
     const subscriptionId = session.subscription;
     console.log(`Subscription complete for Discord user: ${discordId}`);
-
-    console.log(`User data saved to users.json for Discord ID: ${discordId}`);
-  } catch (err) {
-    console.error('File write error:', err);
-  }
   }
 
   res.status(200).send();
