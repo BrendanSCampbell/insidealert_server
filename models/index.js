@@ -1,5 +1,6 @@
+// models/user.js
 const { DataTypes } = require('sequelize');
-const sequelize = require('../sequelize');  // adjust the path based on where sequelize.js is located
+const sequelize = require('../sequelize');  // Path to sequelize.js
 
 const User = sequelize.define('User', {
   discord_id: {
