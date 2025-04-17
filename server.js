@@ -89,6 +89,8 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) =>
   const session = event.data.object;
     const discordId = session.metadata.discord_id;
     console.log(`Subscription complete for Discord user: ${discordId}`);
+
+    const { User } = require('./models');
   }
 
   res.status(200).send();
