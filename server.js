@@ -86,8 +86,10 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) =>
   }
 
   if (event.type === 'checkout.session.completed') {
-  const session = event.data.object;
+    const session = event.data.object;
     const discordId = session.metadata.discord_id;
+    const customerId = session.customer;
+    const subscriptionId = session.subscription;
     console.log(`Subscription complete for Discord user: ${discordId}`);
 
     const { User } = require('./models');
