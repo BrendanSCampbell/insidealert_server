@@ -18,7 +18,7 @@ app.get('/', (req, res) => {
 app.get('/login', (req, res) => {
   const redirectUri = encodeURIComponent('https://insidealert-backendserver-9ef87c4b222a.herokuapp.com/callback');
   const clientId = process.env.DISCORD_CLIENT_ID;
-  const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify`;
+  const oauthUrl = https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify;
   res.redirect(oauthUrl);
 });
 
@@ -81,7 +81,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
-    return res.status(400).send(`Webhook Error: ${err.message}`);
+    return res.status(400).send(Webhook Error: ${err.message});
   }
 
   if (event.type === 'checkout.session.completed') {
@@ -89,7 +89,24 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
     const discordId = session.metadata.discord_id;
     const customerId = session.customer;
     const subscriptionId = session.subscription;
-    console.log(`Subscription complete for Discord user: ${discordId}`);
+    console.log(Subscription complete for Discord user: ${discordId});
+
+    const { User } = require('./models');
+
+    try {
+      await User.findOrCreate({
+        where: { discord_id: discordId },
+        defaults: {
+          stripe_customer_id: customerId,
+          subscription_id: subscriptionId,
+          subscription_status: 'active',
+        },
+      });
+
+      console.log(Saved subscription for Discord user: ${discordId});
+    } catch (err) {
+      console.error('DB error:', err);
+    }
   }
 
   res.status(200).send();
@@ -99,7 +116,7 @@ app.get('/users', async (req, res) => {
   const { User } = require('./models'); // Make sure this path matches where your model is
   try {
     const users = await User.findAll();
-    // console.log(users);  // Logs users to the console
+    console.log(users);  // Logs users to the console
     res.json(users);
   } catch (err) {
     console.error('Failed to fetch users:', err);
@@ -108,4 +125,4 @@ app.get('/users', async (req, res) => {
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+app.listen(PORT, () => console.log(Server running on port ${PORT}));
