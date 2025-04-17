@@ -101,6 +101,31 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
     };
 
     const filePath = path.join(__dirname, 'users.json');
+
+    try {
+    let users = [];
+
+    // Read existing file
+    if (fs.existsSync(filePath)) {
+      const fileData = fs.readFileSync(filePath, 'utf8');
+      users = JSON.parse(fileData);
+    }
+
+    // Avoid duplicate Discord IDs
+    const existingUserIndex = users.findIndex(u => u.discord_id === discordId);
+    if (existingUserIndex !== -1) {
+      users[existingUserIndex] = userData;
+    } else {
+      users.push(userData);
+    }
+
+    // Write updated array to file
+    fs.writeFileSync(filePath, JSON.stringify(users, null, 2));
+
+    console.log(`User data saved to users.json for Discord ID: ${discordId}`);
+  } catch (err) {
+    console.error('File write error:', err);
+  }
   }
 
   res.status(200).send();
