@@ -65,6 +65,7 @@ app.get('/success', (req, res) => {
     app.get('/cancel', (req, res) => {
   res.send('Payment Failed. Please Try Again');
 });
+
     
     res.redirect(session.url);
   } catch (err) {
@@ -74,7 +75,7 @@ app.get('/success', (req, res) => {
 });
 
 // Stripe webhook
-app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
 
@@ -93,16 +94,6 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
 
     const { User } = require('./models');
 
-    try {
-      await User.findOrCreate({
-        where: { discord_id: discordId },
-        defaults: {
-          stripe_customer_id: customerId,
-          subscription_id: subscriptionId,
-          subscription_status: 'active',
-        },
-      });
-
       console.log(Saved subscription for Discord user: ${discordId});
     } catch (err) {
       console.error('DB error:', err);
@@ -110,18 +101,6 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
   }
 
   res.status(200).send();
-});
-
-app.get('/users', async (req, res) => {
-  const { User } = require('./models'); // Make sure this path matches where your model is
-  try {
-    const users = await User.findAll();
-    console.log(users);  // Logs users to the console
-    res.json(users);
-  } catch (err) {
-    console.error('Failed to fetch users:', err);
-    res.status(500).send('Error fetching users');
-  }
 });
 
 const PORT = process.env.PORT || 3000;
