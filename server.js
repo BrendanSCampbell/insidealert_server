@@ -75,7 +75,7 @@ app.get('/success', (req, res) => {
 });
 
 // Stripe webhook
-app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) => {
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
 
