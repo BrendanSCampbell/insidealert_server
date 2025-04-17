@@ -41,7 +41,7 @@ app.get('/callback', async (req, res) => {
 
     const userResponse = await axios.get('https://discord.com/api/users/@me', {
       headers: {
-        Authorization: `Bearer ${access_token}`,
+        Authorization: Bearer ${access_token},
       },
     });
 
