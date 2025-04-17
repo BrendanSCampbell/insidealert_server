@@ -64,6 +64,15 @@ app.get('/callback', async (req, res) => {
   }
 });
 
+// Success and Cancel routes
+app.get('/success', (req, res) => {
+  res.send('Payment successful! You can close this page.');
+});
+
+app.get('/cancel', (req, res) => {
+  res.send('Payment failed. Please try again.');
+});
+
 // Stripe webhook
 app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) => {
   const sig = req.headers['stripe-signature'];
