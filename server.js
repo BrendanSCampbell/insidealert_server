@@ -8,6 +8,15 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+sequelize.sync()
+  .then(() => {
+    console.log('Database synced');
+  })
+  .catch((err) => {
+    console.error('Error syncing database:', err);
+  });
+
+
 // Redirect root URL to /login
 app.get('/', (req, res) => {
   res.redirect('/login');
