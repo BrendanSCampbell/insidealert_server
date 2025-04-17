@@ -95,8 +95,8 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
   res.status(200).send();
 });
 
-const fs = require('fs');
-const path = require('path');
+// const fs = require('fs');
+// const path = require('path');
 
 // Function to update users.json when an order is completed
 // function updateUserOrder(discordId, orderData) {
