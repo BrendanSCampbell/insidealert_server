@@ -1,13 +1,18 @@
 const { Sequelize, DataTypes } = require('sequelize');
 
-// Create a new Sequelize instance connected to PostgreSQL
+// Use the DATABASE_URL environment variable
 const sequelize = new Sequelize(process.env.DATABASE_URL, {
   dialect: 'postgres',
   protocol: 'postgres',
-  logging: false, // Disable logging for production (optional)
+  logging: false,  // Optional: disable logging for production
+  dialectOptions: {
+    ssl: {
+      require: true,
+      rejectUnauthorized: false, // Disables SSL certificate validation (required for Heroku)
+    },
+  },
 });
 
-// Define a User model (example)
 const User = sequelize.define('User', {
   discord_id: {
     type: DataTypes.STRING,
