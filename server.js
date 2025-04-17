@@ -66,6 +66,16 @@ app.get('/success', (req, res) => {
   res.send('Payment Failed. Please Try Again');
 });
 
+   app.get('/users', async (req, res) => {
+  const { User } = require('./models');
+  try {
+    const users = await User.findAll();
+    res.json(users);
+  } catch (err) {
+    console.error('Failed to fetch users:', err);
+    res.status(500).send('Error fetching users');
+  }
+});
     
     res.redirect(session.url);
   } catch (err) {
