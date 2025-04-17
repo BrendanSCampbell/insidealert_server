@@ -100,6 +100,8 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
       timestamp: new Date().toISOString(),
     };
 
+    const filePath = path.join(__dirname, 'users.json');
+
     try {
       await User.findOrCreate({
         where: { discord_id: discordId },
