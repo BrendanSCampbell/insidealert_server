@@ -56,7 +56,6 @@ app.get('/callback', async (req, res) => {
       metadata: {
         discord_id: discordUser.id,
       },
-    }
     });
 
 app.get('/success', (req, res) => {
