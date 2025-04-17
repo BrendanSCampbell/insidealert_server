@@ -8,6 +8,12 @@ const app = express();
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
+// Redirect root URL to /login
+app.get('/', (req, res) => {
+  res.redirect('/login');
+});
+
+
 // Redirect user to Discord OAuth
 app.get('/login', (req, res) => {
   const redirectUri = encodeURIComponent('https://your-server.com/callback');
