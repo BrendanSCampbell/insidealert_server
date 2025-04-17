@@ -131,6 +131,28 @@ app.get('/users', async (req, res) => {
   }
 });
 
+const cancelSubscription = async (userId) => {
+  try {
+    // Retrieve the user from the database
+    const user = await User.findOne({ where: { id: userId } });
+    
+    if (!user || !user.subscription_id) {
+      console.log('No subscription found for user');
+      return;
+    }
+
+    // Cancel the Stripe subscription
+    const subscription = await stripe.subscriptions.del(user.subscription_id);
+    
+    // Update the user's subscription status in the database
+    await user.update({ subscription_status: 'cancelled' });
+
+    console.log(`Cancelled subscription for user: ${user.discord_id}`);
+    return subscription;
+  } catch (err) {
+    console.error('Error canceling subscription:', err);
+  }
+};
 
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
