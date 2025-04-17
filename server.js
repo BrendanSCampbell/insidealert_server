@@ -58,6 +58,15 @@ app.get('/callback', async (req, res) => {
       },
     });
 
+app.get('/success', (req, res) => {
+  res.send('Payment successful! You Can Close This Page');
+});
+
+    app.get('/cancel', (req, res) => {
+  res.send('Payment Failed. Please Try Again');
+});
+
+    
     res.redirect(session.url);
   } catch (err) {
     console.error(err);
