@@ -66,6 +66,19 @@ app.get('/success', (req, res) => {
   res.send('Payment Failed. Please Try Again');
 });
 
+
+if (event.type === 'checkout.session.completed') {
+  const session = event.data.object;
+  const discordId = session.metadata.discord_id;
+  const customerId = session.customer;
+  const subscriptionId = session.subscription;
+
+  // Save to DB
+  
+
+  console.log(`Saved subscription for Discord user: ${discordId}`);
+}
+
     
     res.redirect(session.url);
   } catch (err) {
