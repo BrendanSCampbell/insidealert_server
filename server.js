@@ -66,43 +66,6 @@ app.get('/success', (req, res) => {
   res.send('Payment Failed. Please Try Again');
 });
 
-const { User } = require('./models'); // import User model
-
-// When the user subscribes, save their data in the database
-if (event.type === 'checkout.session.completed') {
-  const session = event.data.object;
-  const discordId = session.metadata.discord_id;
-  const customerId = session.customer;
-  const subscriptionId = session.subscription;
-
-  // Save to DB
-  await User.findOrCreate({
-    where: { discord_id: discordId },
-    defaults: {
-      stripe_customer_id: customerId,
-      subscription_id: subscriptionId,
-      subscription_status: 'active',
-    },
-  });
-
-  console.log(`Saved subscription for Discord user: ${discordId}`);
-}
-
-if (event.type === 'customer.subscription.updated' || event.type === 'customer.subscription.deleted') {
-  const subscription = event.data.object;
-
-  const subscriptionId = subscription.id;
-  const status = subscription.status;
-
-  // Update user subscription status in the database
-  await User.update(
-    { subscription_status: status },
-    { where: { subscription_id: subscriptionId } }
-  );
-
-  console.log(`Updated subscription ${subscriptionId} to ${status}`);
-}
-
     
     res.redirect(session.url);
   } catch (err) {
@@ -123,10 +86,23 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) =>
   }
 
   if (event.type === 'checkout.session.completed') {
-    const session = event.data.object;
-    const discordId = session.metadata.discord_id;
-    console.log(`Subscription complete for Discord user: ${discordId}`);
-    // TODO: Add logic to assign role or notify user
+  const { User } = require('./models'); // import User model
+  const session = event.data.object;
+  const discordId = session.metadata.discord_id;
+  const customerId = session.customer;
+  const subscriptionId = session.subscription;
+
+  // Save to DB
+  await User.findOrCreate({
+    where: { discord_id: discordId },
+    defaults: {
+      stripe_customer_id: customerId,
+      subscription_id: subscriptionId,
+      subscription_status: 'active',
+    },
+  });
+
+  console.log(`Saved subscription for Discord user: ${discordId}`);
   }
 
   res.status(200).send();
