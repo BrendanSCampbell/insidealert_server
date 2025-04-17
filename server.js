@@ -154,5 +154,29 @@ const cancelSubscription = async (userId) => {
   }
 };
 
+app.post('/cancel-subscription', async (req, res) => {
+  const { discord_id } = req.body; // Discord ID passed in the request body
+
+  try {
+    const user = await User.findOne({ where: { discord_id } });
+
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+
+    // Cancel the subscription
+    const cancelledSubscription = await cancelSubscription(user.id);
+    
+    if (cancelledSubscription) {
+      res.send('Subscription cancelled successfully');
+    } else {
+      res.status(500).send('Error cancelling subscription');
+    }
+  } catch (err) {
+    console.error('Error handling cancel subscription:', err);
+    res.status(500).send('Internal server error');
+  }
+});
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
