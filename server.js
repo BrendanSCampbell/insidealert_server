@@ -1,4 +1,3 @@
-// server.js
 const express = require('express');
 const axios = require('axios');
 const bodyParser = require('body-parser');
@@ -13,12 +12,11 @@ app.get('/', (req, res) => {
   res.redirect('/login');
 });
 
-
 // Redirect user to Discord OAuth
 app.get('/login', (req, res) => {
   const redirectUri = encodeURIComponent('https://insidealert-backendserver-9ef87c4b222a.herokuapp.com/callback');
   const clientId = process.env.DISCORD_CLIENT_ID;
-  const oauthUrl = https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify;
+  const oauthUrl = `https://discord.com/api/oauth2/authorize?client_id=${clientId}&redirect_uri=${redirectUri}&response_type=code&scope=identify`;
   res.redirect(oauthUrl);
 });
 
@@ -41,7 +39,7 @@ app.get('/callback', async (req, res) => {
 
     const userResponse = await axios.get('https://discord.com/api/users/@me', {
       headers: {
-        Authorization: Bearer ${access_token},
+        Authorization: `Bearer ${access_token}`,
       },
     });
 
@@ -58,15 +56,6 @@ app.get('/callback', async (req, res) => {
       },
     });
 
-app.get('/success', (req, res) => {
-  res.send('Payment successful! You Can Close This Page');
-});
-
-    app.get('/cancel', (req, res) => {
-  res.send('Payment Failed. Please Try Again');
-});
-
-    
     res.redirect(session.url);
   } catch (err) {
     console.error(err);
@@ -74,15 +63,24 @@ app.get('/success', (req, res) => {
   }
 });
 
+// Success and Cancel routes
+app.get('/success', (req, res) => {
+  res.send('Payment successful! You can close this page.');
+});
+
+app.get('/cancel', (req, res) => {
+  res.send('Payment failed. Please try again.');
+});
+
 // Stripe webhook
-app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) => {
+app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, res) => {
   const sig = req.headers['stripe-signature'];
   let event;
 
   try {
     event = stripe.webhooks.constructEvent(req.body, sig, process.env.STRIPE_WEBHOOK_SECRET);
   } catch (err) {
-    return res.status(400).send(Webhook Error: ${err.message});
+    return res.status(400).send(`Webhook Error: ${err.message}`);
   }
 
   if (event.type === 'checkout.session.completed') {
@@ -90,11 +88,21 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) =>
     const discordId = session.metadata.discord_id;
     const customerId = session.customer;
     const subscriptionId = session.subscription;
-    console.log(Subscription complete for Discord user: ${discordId});
+    console.log(`Subscription complete for Discord user: ${discordId}`);
 
     const { User } = require('./models');
 
-      console.log(Saved subscription for Discord user: ${discordId});
+    try {
+      await User.findOrCreate({
+        where: { discord_id: discordId },
+        defaults: {
+          stripe_customer_id: customerId,
+          subscription_id: subscriptionId,
+          subscription_status: 'active',
+        },
+      });
+
+      console.log(`Saved subscription for Discord user: ${discordId}`);
     } catch (err) {
       console.error('DB error:', err);
     }
@@ -104,4 +112,4 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) =>
 });
 
 const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => console.log(Server running on port ${PORT}));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
