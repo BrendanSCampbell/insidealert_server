@@ -31,7 +31,7 @@ app.get('/callback', async (req, res) => {
       client_secret: process.env.DISCORD_CLIENT_SECRET,
       grant_type: 'authorization_code',
       code,
-      redirect_uri: 'https://your-server.com/callback',
+      redirect_uri: 'https://insidealert-backendserver-9ef87c4b222a.herokuapp.com/callback',
       scope: 'identify',
     }), {
       headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -51,8 +51,8 @@ app.get('/callback', async (req, res) => {
     const session = await stripe.checkout.sessions.create({
       mode: 'subscription',
       line_items: [{ price: process.env.STRIPE_PRICE_ID, quantity: 1 }],
-      success_url: 'https://your-server.com/success',
-      cancel_url: 'https://your-server.com/cancel',
+      success_url: 'https://insidealert-backendserver-9ef87c4b222a.herokuapp.com/success',
+      cancel_url: 'https://insidealert-backendserver-9ef87c4b222a.herokuapp.com/cancel',
       metadata: {
         discord_id: discordUser.id,
       },
