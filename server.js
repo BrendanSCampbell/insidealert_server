@@ -92,7 +92,13 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
     const subscriptionId = session.subscription;
     console.log(`Subscription complete for Discord user: ${discordId}`);
 
-    const { User } = require('./models');
+    const userData = {
+      discord_id: discordID,
+      stripe_customer_id: customerId,
+      subscription_id: subscriptionId,
+      subscription_status: 'active',
+      timestamp: new Date().toISOString(),
+    };
 
     try {
       await User.findOrCreate({
