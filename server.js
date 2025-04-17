@@ -115,9 +115,9 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
 app.get('/users', async (req, res) => {
   const { User } = require('./models'); // Make sure this path matches where your model is
   try {
-    // const users = await User.findAll();
+    const users = await User.findAll();
     // console.log(users);  // Logs users to the console
-    res.json("test");
+    res.json(users);
   } catch (err) {
     console.error('Failed to fetch users:', err);
     res.status(500).send('Error fetching users');
