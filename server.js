@@ -99,8 +99,8 @@ const fs = require('fs');
 const path = require('path');
 
 // Function to update users.json when an order is completed
-function updateUserOrder(discordId, orderData) {
-  const filePath = path.join(__dirname, 'users.json');
+// function updateUserOrder(discordId, orderData) {
+//   const filePath = path.join(__dirname, 'users.json');
 
   // Read the existing users.json file
 //   fs.readFile(filePath, 'utf8', (readErr, data) => {
