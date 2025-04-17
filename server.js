@@ -102,16 +102,6 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), async (req, r
 
     const filePath = path.join(__dirname, 'users.json');
 
-    try {
-      await User.findOrCreate({
-        where: { discord_id: discordId },
-        defaults: {
-          stripe_customer_id: customerId,
-          subscription_id: subscriptionId,
-          subscription_status: 'active',
-        },
-      });
-
       console.log(`Saved subscription for Discord user: ${discordId}`);
     } catch (err) {
       console.error('DB error:', err);
