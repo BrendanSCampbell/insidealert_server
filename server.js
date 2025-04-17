@@ -6,6 +6,14 @@ const app = express();
 const fs = require('fs');
 const path = require('path');
 
+const { User } = require('./models');
+
+// Sync the models with the database (This will create the table if it doesn't exist)
+sequelize.sync({ force: false }).then(() => {
+  console.log('Database synced!');
+});
+
+
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
