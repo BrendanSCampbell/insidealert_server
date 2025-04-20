@@ -100,21 +100,30 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) =>
     console.log(`Subscription complete for Discord user: ${discordId}`);
 
     // Create or update user in the database
-    User.findOrCreate({
-      where: { discord_id: discordId },
-      defaults: {
+    User.findOne({ where: { discord_id: discordId } })
+  .then(async (user) => {
+    if (!user) {
+      // User doesn't exist, create a new one
+      await User.create({
+        discord_id: discordId,
         stripe_customer_id: customerId,
         subscription_id: subscriptionId,
         subscription_status: 'active',
-      },
-    })
-    .then(() => {
-      console.log(`Saved subscription for Discord user: ${discordId}`);
-    })
-    .catch((err) => {
-      console.error('DB error:', err);
-    });
-  }
+      });
+      console.log(`Created new subscription for Discord user: ${discordId}`);
+    } else {
+      // User exists, update the subscription status to 'active'
+      await user.update({
+        stripe_customer_id: customerId,
+        subscription_id: subscriptionId,
+        subscription_status: 'active',
+      });
+      console.log(`Updated subscription status for Discord user: ${discordId}`);
+    }
+  })
+  .catch((err) => {
+    console.error('DB error:', err);
+  });
 
   res.status(200).send();
 });
