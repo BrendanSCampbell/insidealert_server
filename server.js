@@ -5,7 +5,8 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { sequelize, User } = require('./models'); // Import sequelize and User model
 const app = express();
 
-app.use(bodyParser.raw({ type: 'application/json' }));
+app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: true }));
 
 sequelize.sync()
   .then(() => {
