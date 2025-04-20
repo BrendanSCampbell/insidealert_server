@@ -94,6 +94,7 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) =>
   }
 
   if (event.type === 'checkout.session.completed') {
+    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
   const session = event.data.object;
   const discordId = session.metadata.discord_id;
   const customerId = session.customer;
