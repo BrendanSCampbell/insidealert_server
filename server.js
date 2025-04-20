@@ -155,8 +155,9 @@ const cancelSubscription = async (userId) => {
 };
 
 app.post('/cancel-subscription', async (req, res) => {
+  console.log('Request body:', req.body);
   const { discord_id } = req.body; // Discord ID passed in the request body
-  // console.log('${discord_id}');
+  
   try {
     const user = await User.findOne({ where: { discord_id } });
 
