@@ -5,8 +5,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { sequelize, User } = require('./models'); // Import sequelize and User model
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.raw({ type: 'application/json' }));
 
 sequelize.sync()
   .then(() => {
@@ -155,7 +154,7 @@ const cancelSubscription = async (userId) => {
   }
 };
 
-app.post('/cancel-subscription', async (req, res) => {
+app.post('/cancel-subscription', express.json(), async (req, res) => {
   console.log('Request body:', req.body);
   const { discord_id } = req.body; // Discord ID passed in the request body
   
