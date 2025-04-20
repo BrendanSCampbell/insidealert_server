@@ -5,8 +5,7 @@ const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 const { sequelize, User } = require('./models'); // Import sequelize and User model
 const app = express();
 
-app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({ extended: true }));
+app.use(bodyParser.raw({ type: 'application/json' }));
 
 sequelize.sync()
   .then(() => {
@@ -94,41 +93,30 @@ app.post('/webhook', bodyParser.raw({ type: 'application/json' }), (req, res) =>
   }
 
   if (event.type === 'checkout.session.completed') {
-    console.log('@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@');
-  const session = event.data.object;
-  const discordId = session.metadata.discord_id;
-  const customerId = session.customer;
-  const subscriptionId = session.subscription;
-  console.log(`Subscription complete for Discord user: ${discordId}`);
+    const session = event.data.object;
+    const discordId = session.metadata.discord_id;
+    const customerId = session.customer;
+    const subscriptionId = session.subscription;
+    console.log(`Subscription complete for Discord user: ${discordId}`);
 
-  // Find the user by Discord ID and either create or update
-  User.findOne({ where: { discord_id: discordId } })
-    .then(async (user) => {
-      if (!user) {
-        // User doesn't exist, create a new one
-        await User.create({
-          discord_id: discordId,
-          stripe_customer_id: customerId,
-          subscription_id: subscriptionId,
-          subscription_status: 'active',
-        });
-        console.log(`Created new subscription for Discord user: ${discordId}`);
-      } else {
-        // User exists, update their details
-        await user.update({
-          stripe_customer_id: customerId,
-          subscription_id: subscriptionId,
-          subscription_status: 'active',
-        });
-        console.log(`Updated subscription for Discord user: ${discordId}`);
-      }
+    // Create or update user in the database
+    User.findOrCreate({
+      where: { discord_id: discordId },
+      defaults: {
+        stripe_customer_id: customerId,
+        subscription_id: subscriptionId,
+        subscription_status: 'active',
+      },
+    })
+    .then(() => {
+      console.log(`Saved subscription for Discord user: ${discordId}`);
     })
     .catch((err) => {
       console.error('DB error:', err);
     });
-}
+  }
 
-res.status(200).send();
+  res.status(200).send();
 });
 
 
